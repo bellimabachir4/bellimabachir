@@ -1,0 +1,6 @@
+{
+  "name": "IELTS Prep Practice",
+  "description": "A comprehensive IELTS preparation interactive dashboard with customized study plans, mock tests, resource links, and AI-powered speaking evaluation.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

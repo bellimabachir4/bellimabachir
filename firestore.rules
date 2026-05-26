@@ -1,0 +1,83 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Catch-all safety net (Global Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- REUSABLE SECURITY HIGHLIGHT HELPERS ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // --- VALIDATION BLUEPRINTS ---
+    function isValidUser(data) {
+      return data.uid == request.auth.uid
+        && data.fullName is string
+        && data.fullName.size() >= 2
+        && data.fullName.size() <= 150
+        && data.email is string
+        && data.email.size() <= 200
+        && data.streak is int
+        && data.streak >= 0
+        && data.vocabularyScore is int
+        && data.vocabularyScore >= 0;
+    }
+
+    function isValidVocabProgress(data) {
+      return data.userId == request.auth.uid
+        && data.word is string
+        && data.word.size() <= 100
+        && data.learned is bool
+        && data.favorited is bool;
+    }
+
+    function isValidPracticeResult(data) {
+      return data.userId == request.auth.uid
+        && data.skillType is string
+        && data.skillType.size() <= 50
+        && data.score is string
+        && data.score.size() <= 30;
+    }
+
+    // --- COLLECTION ALLOW MATCH BLOCKS ---
+
+    // 1. Users collection rules
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) 
+        && request.resource.data.uid == resource.data.uid; // email is immutable or uid is matching
+      allow delete: if false; // Users cannot be deleted from client directly
+    }
+
+    // 2. Vocabulary progress rules
+    match /vocabularyProgress/{progressId} {
+      allow get: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidVocabProgress(request.resource.data);
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid && isValidVocabProgress(request.resource.data)
+        && request.resource.data.userId == resource.data.userId;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // 3. Practice History rules
+    match /practiceHistory/{historyId} {
+      allow get: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid && isValidPracticeResult(request.resource.data);
+      allow update: if false; // Practice results are immutable
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile containing settings, current streak, goals, and high-level progress indicators.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique user ID matching Firebase Auth."
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Full display name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address."
+        },
+        "streak": {
+          "type": "integer",
+          "description": "Current consecutive study days streak."
+        },
+        "lastActiveDate": {
+          "type": "string",
+          "description": "ISO date for calculating the daily streak."
+        },
+        "weeklyGoalHours": {
+          "type": "integer",
+          "description": "Target study hours per week."
+        },
+        "vocabularyScore": {
+          "type": "integer",
+          "description": "Overall points accumulated in IELTS vocabulary practices."
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "URL link to selected user avatar image."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Document creation timestamp."
+        }
+      },
+      "required": ["uid", "fullName", "email", "streak", "vocabularyScore"]
+    },
+    "VocabularyProgress": {
+      "title": "VocabularyProgress",
+      "description": "Individual word progress state, noting if learned or favorited.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "ID of the owner of this progress record."
+        },
+        "word": {
+          "type": "string",
+          "description": "The English word."
+        },
+        "learned": {
+          "type": "boolean",
+          "description": "True if marked as learned by user."
+        },
+        "favorited": {
+          "type": "boolean",
+          "description": "True if marked as favorite."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the word, e.g. awl."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when word status was updated."
+        }
+      },
+      "required": ["userId", "word", "learned", "favorited"]
+    },
+    "PracticeResult": {
+      "title": "PracticeResult",
+      "description": "Tracks logs for Speaking, Writing, Reading, or Listening practice attempts.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The student ID who performed the exercise."
+        },
+        "skillType": {
+          "type": "string",
+          "enum": ["Reading", "Listening", "Speaking", "Writing", "Vocabulary"],
+          "description": "The verified IELTS section type."
+        },
+        "score": {
+          "type": "string",
+          "description": "Result band or score achieved, e.g., '6.5' or '10/10'."
+        },
+        "details": {
+          "type": "string",
+          "description": "Specific answers or feedback content."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Practice session date."
+        }
+      },
+      "required": ["userId", "skillType", "score", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Access profile configuration for individuals."
+    },
+    "/vocabularyProgress/{progressId}": {
+      "schema": "VocabularyProgress",
+      "description": "Progress entries for words tagged to specific users."
+    },
+    "/practiceHistory/{historyId}": {
+      "schema": "PracticeResult",
+      "description": "Activity history tracking logs."
+    }
+  }
+}
