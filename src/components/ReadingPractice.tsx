@@ -50,6 +50,17 @@ export default function ReadingPractice() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [tempGoalMinutes, setTempGoalMinutes] = useState(25);
 
+  // Interactive 21-site Search & Tags Filtering
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState("All");
+
+  const filteredSites = READING_SITES.filter(site => {
+    const matchesSearch = site.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          site.desc.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTag = selectedTag === "All" || site.tag === selectedTag;
+    return matchesSearch && matchesTag;
+  });
+
 
 
   useEffect(() => {
@@ -278,97 +289,143 @@ export default function ReadingPractice() {
         ))}
       </div>
 
-      {/* Dedicated Reading Resources section */}
+      {/* Dedicated Reading Resources section with 21 sites, Search, and Tag Filters */}
       <div className="mt-12 pt-8 border-t border-slate-200/60 dark:border-slate-800/80">
-        <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-xs mb-4 text-right flex items-center justify-end gap-1.5">
-          <span>المصادر والمنصات الخارجية المعتمدة للقراءة</span>
-          <span className="p-1.5 bg-purple-50 dark:bg-purple-950/40 rounded-lg text-purple-600 dark:text-purple-400">🌐</span>
+        <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-base mb-2 text-right flex items-center justify-end gap-1.5">
+          <span>المصادر الخارجية الإضافية المعتمدة للقراءة (21 موقع)</span>
+          <span className="p-1.5 bg-emerald-50 dark:bg-emerald-950/40 rounded-lg text-emerald-600 dark:text-emerald-400">🌐</span>
         </h3>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 text-right mb-6">
+          انقر فوق أي زر وسيتم فتح الموقع فورًا في نافذة خارجية للبدء بالممارسة والتحضير.
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          
-          {/* Cathoven Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-4.5 rounded-2xl flex flex-col justify-between h-40 hover:-translate-y-1 hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-900/50 transition-all duration-300 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-500/5 to-purple-500/5 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-            <div>
-              <div className="flex justify-between items-start mb-2 flex-row-reverse">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-indigo-600 text-white flex items-center justify-center font-black text-xs">
-                  CAT
-                </div>
-                <span className="text-[9px] bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded font-black font-mono">AI READ</span>
-              </div>
-              <h4 className="font-extrabold text-xs text-slate-800 dark:text-white text-right">Cathoven</h4>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-right leading-relaxed mt-1" dir="rtl">
-                صيانة الذكاء الاصطناعي لفحص تفكيك النصوص وبناء القراءة الموجهة وتطوير المفردات الصعبة فوراً بلهجات متعددة.
-              </p>
+        {/* Search and Filters wrapper */}
+        <div className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6 space-y-3.5">
+          <div className="flex flex-col sm:flex-row-reverse gap-3 items-center justify-between">
+            {/* Search Input */}
+            <div className="w-full sm:w-72">
+              <input
+                type="text"
+                placeholder="🔍 ابحث عن موقع أو مصدر..."
+                className="w-full text-right bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-slate-800 dark:text-slate-200"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </div>
-            <a
-              href="https://www.cathoven.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 bg-slate-55 dark:bg-slate-850 hover:bg-purple-600 hover:text-white dark:text-slate-200 text-slate-700 font-bold text-[10.5px] py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all"
-            >
-              <span>فتح الموقع الرسمي</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
-
-          {/* Engnovate Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-4.5 rounded-2xl flex flex-col justify-between h-40 hover:-translate-y-1 hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-900/50 transition-all duration-300 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-            <div>
-              <div className="flex justify-between items-start mb-2 flex-row-reverse">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center font-black text-xs">
-                  ENG
-                </div>
-                <span className="text-[9px] bg-purple-50 dark:bg-purple-955/20 text-purple-700 dark:text-purple-400 px-2 py-0.5 rounded font-black font-mono">FLOW LEVEL</span>
-              </div>
-              <h4 className="font-extrabold text-xs text-slate-800 dark:text-white text-right">Engnovate</h4>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-right leading-relaxed mt-1" dir="rtl">
-                منصة التدريب على التحليل اللفظي السلس وصقل الفهم اللغوي وبناء سرعة تدفق كتل الجمل الطويلة الصعبة.
-              </p>
+            {/* Tag Buttons Filter */}
+            <div className="flex flex-wrap gap-1.5 justify-end w-full sm:w-auto" dir="rtl">
+              {["All", "News", "Academic", "Learning", "Tests", "Scientific"].map((tag) => {
+                const tagLabels: { [key: string]: string } = {
+                  All: "الكل",
+                  News: "صحافة وأخبار",
+                  Academic: "كتابات أكاديمية",
+                  Learning: "تعليم وتطوير",
+                  Tests: "تمارين واختبارات",
+                  Scientific: "علمي وثقافي"
+                };
+                return (
+                  <button
+                    key={tag}
+                    onClick={() => setSelectedTag(tag)}
+                    className={`text-[10px] px-3 py-1.5 rounded-lg border font-bold transition-all ${
+                      selectedTag === tag
+                        ? "bg-emerald-600 text-white border-emerald-600 scale-102"
+                        : "bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-900"
+                    }`}
+                  >
+                    {tagLabels[tag] || tag}
+                  </button>
+                );
+              })}
             </div>
-            <a
-              href="https://engnovate.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 bg-slate-55 dark:bg-slate-850 hover:bg-purple-600 hover:text-white dark:text-slate-200 text-slate-700 font-bold text-[10.5px] py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all"
-            >
-              <span>فتح الموقع الرسمي</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
           </div>
+        </div>
 
-          {/* IELTS Online Tests Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-4.5 rounded-2xl flex flex-col justify-between h-40 hover:-translate-y-1 hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-900/50 transition-all duration-300 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-            <div>
-              <div className="flex justify-between items-start mb-2 flex-row-reverse">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-black text-xs font-mono">
-                  IOT
+        {/* 21 Sites Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" dir="rtl">
+          {filteredSites.map((site, index) => {
+            const tagStyles: { [key: string]: string } = {
+              News: "bg-blue-50 text-blue-700 border-blue-150 dark:bg-blue-950/30 dark:text-blue-400 dark:border-blue-900/50",
+              Academic: "bg-emerald-50 text-emerald-700 border-emerald-150 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-900/50",
+              Learning: "bg-purple-50 text-purple-700 border-purple-150 dark:bg-purple-950/30 dark:text-purple-400 dark:border-purple-900/50",
+              Tests: "bg-orange-50 text-orange-700 border-orange-150 dark:bg-orange-950/30 dark:text-orange-400 dark:border-orange-900/50",
+              Scientific: "bg-pink-50 text-pink-700 border-pink-150 dark:bg-pink-950/30 dark:text-pink-400 dark:border-pink-900/50"
+            };
+
+            const tagLabels: { [key: string]: string } = {
+              News: "صحافة وأخبار",
+              Academic: "مستوى أكاديمي",
+              Learning: "مطور مبتدئ",
+              Tests: "أسئلة واختبارات",
+              Scientific: "علوم وثقافة"
+            };
+
+            return (
+              <div
+                key={index}
+                className="bg-white dark:bg-slate-900 border border-slate-150/60 dark:border-slate-800/80 p-5 rounded-3xl flex flex-col justify-between h-44 hover:-translate-y-1 hover:shadow-md hover:border-emerald-350 dark:hover:border-emerald-900/60 transition-all duration-300 relative group"
+              >
+                {/* Visual Accent */}
+                <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-emerald-500/5 to-indigo-500/5 rounded-full blur-xl pointer-events-none"></div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-2.5">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-white leading-tight">
+                      {site.name}
+                    </h4>
+                    <span className={`text-[9px] px-2 py-0.5 rounded-full font-bold border ${tagStyles[site.tag] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
+                      {tagLabels[site.tag] || site.tag}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-450 text-right leading-relaxed line-clamp-2">
+                    {site.desc}
+                  </p>
                 </div>
-                <span className="text-[9px] bg-blue-50 dark:bg-blue-955/20 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded font-black font-mono">MOCK EXAM</span>
-              </div>
-              <h4 className="font-extrabold text-xs text-slate-800 dark:text-white text-right">IELTS Online Tests</h4>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-right leading-relaxed mt-1" dir="rtl">
-                المنصة الأضخم على الإطلاق المليئة بالامتحانات الكاملة المجانية تماماً والموزعة وفق مؤشر توقيت حقيقي دقيق.
-              </p>
-            </div>
-            <a
-              href="https://ieltsonlinetests.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 bg-slate-55 dark:bg-slate-850 hover:bg-purple-600 hover:text-white dark:text-slate-200 text-slate-700 font-bold text-[10.5px] py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all"
-            >
-              <span>تصفح نماذج الاختبارات</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
 
+                <a
+                  href={site.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 bg-slate-50 dark:bg-slate-950 hover:bg-emerald-600 dark:hover:bg-emerald-600 hover:text-white dark:hover:text-white text-slate-600 dark:text-slate-300 font-bold text-[10.5px] py-2 px-3 rounded-xl flex items-center justify-center gap-1.5 border border-slate-200/60 dark:border-slate-850 transition-all duration-200 cursor-pointer"
+                >
+                  <span>أبحر في قراءة الموقع</span>
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            );
+          })}
+          {filteredSites.length === 0 && (
+            <div className="col-span-full text-center py-8 text-slate-400 dark:text-slate-600">
+              لا توجد مصادر تطابق هذا البحث أو التصنيف.
+            </div>
+          )}
         </div>
       </div>
-
     </div>
   );
 }
+
+const READING_SITES = [
+  { name: "Fox News", url: "https://www.foxnews.com", desc: "أخبار عالمية وتغطيات متنوعة لتطوير كتل المفردات.", tag: "News" },
+  { name: "CNN", url: "https://www.cnn.com", desc: "تغطية عالمية ممتازة لممارسة القراءة السريعة والأخبار.", tag: "News" },
+  { name: "Reuters", url: "https://www.reuters.com", desc: "تقارير إخبارية موضوعية ومصطلحات سياسية واقتصادية دقيقة.", tag: "News" },
+  { name: "The New York Post", url: "https://nypost.com", desc: "مقالات حيوية ومتنوعة بأسلوب قراءة سلس وشيق.", tag: "News" },
+  { name: "The Washington Post", url: "https://www.washingtonpost.com", desc: "كتابات تحليلية عميقة تناسب مستوى القراءة الأكاديمي.", tag: "Academic" },
+  { name: "The Guardian", url: "https://www.theguardian.com", desc: "صحيفة بريطانية مرموقة غنية بالمفردات والتراكيب القوية.", tag: "Academic" },
+  { name: "VOA Learning English", url: "https://learningenglish.voanews.com", desc: "أخبار مبسطة مخصصة لمتعلمي اللغة الإنجليزية بلهجة واضحة.", tag: "Learning" },
+  { name: "BBC", url: "https://www.bbc.com", desc: "المصدر البريطاني الأساسي والأهم لضبط الفهم اللغوي المتكامل.", tag: "Academic" },
+  { name: "National Post", url: "https://nationalpost.com", desc: "صحيفة كندية ممتازة تقدم تغطيات ومقالات تحليلية مفيدة.", tag: "Academic" },
+  { name: "British Council (Teens)", url: "https://learnenglishteens.britishcouncil.org", desc: "مواد قراءة ومهام تفاعلية منظمة من المجلس الثقافي البريطاني.", tag: "Learning" },
+  { name: "Nat Geo Kids", url: "https://kids.nationalgeographic.com", desc: "حقائق علمية ممتعة وجذابة مناسبة للمبتدئين والمتوسطين.", tag: "Learning" },
+  { name: "Lingua", url: "https://lingua.com", desc: "نصوص قراءة مقسمة حسب المستويات مع أسئلة اختبار الفهم.", tag: "Tests" },
+  { name: "BBC Learning English", url: "https://www.bbc.co.uk/learningenglish", desc: "بوابة مجانية تعليمية تفاعلية غنية بالدروس والمفردات.", tag: "Learning" },
+  { name: "Smithsonian", url: "https://www.si.edu", desc: "منشورات وقصص تاريخية وعلمية تماثل نصوص الآيلتس تماماً.", tag: "Scientific" },
+  { name: "Breaking News English", url: "https://breakingnewsenglish.com", desc: "دروس تفاعلية جاهزة تعتمد على القصص الإخبارية بمستويات متعددة.", tag: "Tests" },
+  { name: "ReadTheory", url: "https://readtheory.org", desc: "منصة ذكية مخصصة لتحسين مهارة الفهم القرائي وتتبع تقدمك.", tag: "Tests" },
+  { name: "ESL Fast", url: "https://www.eslfast.com", desc: "مئات القصص والمقالات السريعة لمتعلمي اللغة لبناء الانسيابية.", tag: "Learning" },
+  { name: "ESL Lounge", url: "https://www.esl-lounge.com", desc: "نصوص قراءات مصنفة ومعدة لتمارين الفهم والتحضير الفعلي.", tag: "Tests" },
+  { name: "TeachYa", url: "https://teachya.com", desc: "تمارين واختبارات لغة مجانية لتطوير مستواك القواعدي والقرائي.", tag: "Tests" },
+  { name: "ReadWorks", url: "https://www.readworks.org", desc: "أكبر مكتبة للمقالات العلمية والأدبية المرفقة بتمارين فحص الفهم.", tag: "Scientific" },
+  { name: "Newsela", url: "https://newsela.com", desc: "مقالات إخبارية حديثة مقسمة ومعدة لتناسب طلاب كافة المستويات.", tag: "Academic" }
+];
 

@@ -105,6 +105,18 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const DEFAULT_USER: IELTSUser = {
+    uid: "local_ielts_student",
+    fullName: "طالب آيلتس المتميز",
+    email: "my-ielts-student@academic.edu",
+    streak: 5,
+    lastActiveDate: new Date().toISOString().split("T")[0],
+    weeklyGoalHours: 5,
+    vocabularyScore: 120,
+    avatarUrl: "https://api.dicebear.com/7.x/adventurer/svg?seed=ielts_student_production",
+    targetBand: 7.0
+  };
+
   const [user, setUser] = useState<IELTSUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [practiceHistory, setPracticeHistory] = useState<PracticeResult[]>([]);
@@ -171,7 +183,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 lastActiveDate: new Date().toISOString().split("T")[0],
                 weeklyGoalHours: 5,
                 vocabularyScore: 50,
-                avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${firebaseUser.uid}`
+                avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${firebaseUser.uid}`,
+                targetBand: 7.0
               };
               await setDoc(userRef, profile);
             }
@@ -181,10 +194,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Check if there's a local/remembered user or a guest user saved
             const savedLocalUser = localStorage.getItem("ielts_current_user");
             if (savedLocalUser) {
-              const parsed = JSON.parse(savedLocalUser);
-              const calculated = checkAndCalculateStreak(parsed);
-              setUser(calculated);
-              loadMockData(calculated.uid);
+              try {
+                const parsed = JSON.parse(savedLocalUser);
+                const calculated = checkAndCalculateStreak(parsed);
+                setUser(calculated);
+                loadMockData(calculated.uid);
+              } catch (e) {
+                setUser(null);
+              }
             } else {
               setUser(null);
             }
@@ -200,10 +217,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Local Auth only
       const savedLocalUser = localStorage.getItem("ielts_current_user");
       if (savedLocalUser) {
-        const parsed = JSON.parse(savedLocalUser);
-        const calculated = checkAndCalculateStreak(parsed);
-        setUser(calculated);
-        loadMockData(calculated.uid);
+        try {
+          const parsed = JSON.parse(savedLocalUser);
+          const calculated = checkAndCalculateStreak(parsed);
+          setUser(calculated);
+          loadMockData(calculated.uid);
+        } catch (e) {
+          setUser(null);
+        }
       }
       setLoading(false);
     }

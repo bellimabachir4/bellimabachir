@@ -359,7 +359,7 @@ function AppContent() {
   // Merge User Score with Leaderboard Competitors
   const leaderboard = [
     ...MOCK_LEADERS,
-    { name: `${user.fullName} (أنت) 🎯`, score: Math.max(wordProgress.filter(w => w.learned).length * 10, user.vocabularyScore || 0), avatar: user.avatarUrl }
+    { name: `${user?.fullName || "أنت"} (أنت) 🎯`, score: Math.max(wordProgress.filter(w => w.learned).length * 10, user?.vocabularyScore || 0), avatar: user?.avatarUrl || "https://api.dicebear.com/7.x/adventurer/svg?seed=user_avatar" }
   ].sort((a, b) => b.score - a.score);
 
   return (
@@ -378,21 +378,21 @@ function AppContent() {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => logout()}
-                className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-605 rounded-xl transition-all border border-transparent hover:border-red-100/50 cursor-pointer"
+                className="p-2 hover:bg-red-50 dark:hover:bg-red-950/30 text-slate-400 hover:text-red-650 rounded-xl transition-all border border-transparent hover:border-red-100/50 cursor-pointer"
                 title="تسجيل الخروج الآمن"
               >
                 <LogOut className="h-4.5 w-4.5" />
               </button>
 
               <div className="text-right hidden sm:block">
-                <span className="font-extrabold text-xs text-slate-800 dark:text-slate-200 block">{user.fullName}</span>
+                <span className="font-extrabold text-xs text-slate-800 dark:text-slate-200 block">{user?.fullName}</span>
                 <span className="text-[10px] text-purple-650 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded-md font-extrabold font-mono mt-0.5 inline-block">
                   باند مستهدف: {targetBand.toFixed(1)} 🎓
                 </span>
               </div>
 
               <img 
-                src={user.avatarUrl} 
+                src={user?.avatarUrl} 
                 alt="Avatar" 
                 className="w-10 h-10 rounded-xl border border-purple-200 dark:border-purple-900 shadow-sm shrink-0 bg-slate-100 dark:bg-slate-800"
                 referrerPolicy="no-referrer"

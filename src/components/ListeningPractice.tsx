@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Youtube, Bookmark, CheckCircle2, Video, List, Zap, ExternalLink } from "lucide-react";
+import { Youtube, Bookmark, CheckCircle2, Video, List, Zap, ExternalLink, Headphones, Play } from "lucide-react";
 
 interface ListeningSource {
   id: string;
@@ -42,6 +42,13 @@ export default function ListeningPractice() {
   });
 
   const [dailyQuotaMinutes, setDailyQuotaMinutes] = useState(30);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredPodcasts = LISTENING_PODCASTS.filter(podcast => {
+    return podcast.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+           podcast.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           podcast.host.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   useEffect(() => {
     localStorage.setItem("ielts_listening_sources", JSON.stringify(sources));
@@ -228,96 +235,92 @@ export default function ListeningPractice() {
         })}
       </div>
 
-      {/* Dedicated Listening Resources section */}
+      {/* Dedicated Listening Resources section - 10 top-rated Podcasts exactly as requested */}
       <div className="mt-12 pt-8 border-t border-slate-200/60 dark:border-slate-800/80">
-        <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-xs mb-4 text-right flex items-center justify-end gap-1.5">
-          <span>المصادر والمنصات الخارجية المعتمدة للاستماع</span>
-          <span className="p-1.5 bg-purple-50 dark:bg-purple-950/40 rounded-lg text-purple-600 dark:text-purple-400">🌐</span>
+        <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-base mb-2 text-right flex items-center justify-end gap-1.5">
+          <span>بودكاست ومواقع التدرب على مهارة السماع (10 مصادر)</span>
+          <span className="p-1.5 bg-orange-50 dark:bg-orange-950/40 rounded-lg text-orange-500">🎧</span>
         </h3>
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 text-right mb-6">
+          انقر فوق أي زر وسيتم توجيهك للمنصة أو مشغل البودكاست فوراً للبدء بالاستماع المباشر.
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          
-          {/* Cathoven Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-4.5 rounded-2xl flex flex-col justify-between h-40 hover:-translate-y-1 hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-900/50 transition-all duration-300 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-orange-500/5 to-purple-500/5 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-            <div>
-              <div className="flex justify-between items-start mb-2 flex-row-reverse">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-indigo-600 text-white flex items-center justify-center font-black text-xs font-mono">
-                  CAT
-                </div>
-                <span className="text-[9px] bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 px-2 py-0.5 rounded font-black font-mono">AI ACCENT</span>
-              </div>
-              <h4 className="font-extrabold text-xs text-slate-800 dark:text-white text-right">Cathoven</h4>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-right leading-relaxed mt-1" dir="rtl">
-                تدريب متصل على تفكيك اللفظ، تتبع اللهجات الأسترالية والبريطانية، ورسم استيعاب سمعي دقيق للاستماع.
-              </p>
-            </div>
-            <a
-              href="https://www.cathoven.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 bg-slate-55 dark:bg-slate-850 hover:bg-purple-600 hover:text-white dark:text-slate-200 text-slate-700 font-bold text-[10.5px] py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all"
-            >
-              <span>فتح الموقع الرسمي</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
+        {/* Search box for Podcasts */}
+        <div className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-6">
+          <div className="flex justify-between items-center flex-row-reverse w-full sm:w-72 mr-auto">
+            <input
+              type="text"
+              placeholder="🔍 ابحث عن بودكاست أو متحدث..."
+              className="w-full text-right bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-orange-500 focus:focus-border-orange-500 text-slate-800 dark:text-slate-200"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
+        </div>
 
-          {/* Engnovate Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-4.5 rounded-2xl flex flex-col justify-between h-40 hover:-translate-y-1 hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-900/50 transition-all duration-300 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-500/5 to-pink-500/5 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-            <div>
-              <div className="flex justify-between items-start mb-2 flex-row-reverse">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 text-white flex items-center justify-center font-black text-xs font-mono">
-                  ENG
-                </div>
-                <span className="text-[9px] bg-purple-50 dark:bg-purple-955/20 text-purple-700 dark:text-purple-400 px-2 py-0.5 rounded font-black font-mono">AUDIOLOGY</span>
-              </div>
-              <h4 className="font-extrabold text-xs text-slate-800 dark:text-white text-right">Engnovate</h4>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-right leading-relaxed mt-1" dir="rtl">
-                بناء مرونة استباق الأسئلة وتطوير المقاطع السمعية التحليلية مع التركيز على الكلمات المفتاحية في الآيلتس.
-              </p>
-            </div>
-            <a
-              href="https://engnovate.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 bg-slate-55 dark:bg-slate-850 hover:bg-purple-600 hover:text-white dark:text-slate-200 text-slate-700 font-bold text-[10.5px] py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all"
+        {/* 10 Podcasts Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4" dir="rtl">
+          {filteredPodcasts.map((podcast, index) => (
+            <div
+              key={index}
+              className="bg-white dark:bg-slate-900 border-2 border-slate-100/70 dark:border-slate-800/80 p-5 rounded-3xl flex flex-col justify-between h-44 hover:-translate-y-1 hover:shadow-md hover:border-orange-350 dark:hover:border-orange-900/50 transition-all duration-300 relative group"
             >
-              <span>فتح الموقع الرسمي</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
+              {/* Overlay graphics */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-br from-orange-500/5 to-purple-500/5 rounded-full blur-xl pointer-events-none"></div>
 
-          {/* IELTS Online Tests Card */}
-          <div className="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 p-4.5 rounded-2xl flex flex-col justify-between h-40 hover:-translate-y-1 hover:shadow-lg hover:border-purple-300/50 dark:hover:border-purple-900/50 transition-all duration-300 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/5 to-indigo-500/5 rounded-full blur-2xl pointer-events-none group-hover:scale-110 transition-transform"></div>
-            <div>
-              <div className="flex justify-between items-start mb-2 flex-row-reverse">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-black text-xs font-mono">
-                  IOT
+              <div>
+                <div className="flex justify-between items-start mb-2">
+                  <div className="text-right">
+                    <h4 className="font-extrabold text-xs text-slate-800 dark:text-white leading-tight flex items-center gap-1">
+                      <span>{podcast.name}</span>
+                    </h4>
+                    <span className="text-[9px] text-slate-400 dark:text-slate-500 font-bold block mt-0.5">
+                      بتقديم: {podcast.host}
+                    </span>
+                  </div>
+                  <span className="p-1 text-orange-600 bg-orange-50 dark:bg-orange-950/30 rounded-lg shrink-0">
+                    <Headphones className="h-4 w-4" />
+                  </span>
                 </div>
-                <span className="text-[9px] bg-blue-50 dark:bg-blue-955/20 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded font-black font-mono">LISTENING LIST</span>
+                <p className="text-[10px] text-slate-500 dark:text-slate-450 text-right leading-relaxed line-clamp-2 mt-1">
+                  {podcast.desc}
+                </p>
               </div>
-              <h4 className="font-extrabold text-xs text-slate-800 dark:text-white text-right">IELTS Online Tests</h4>
-              <p className="text-[10px] text-slate-400 dark:text-slate-500 text-right leading-relaxed mt-1" dir="rtl">
-                امتحانات استماع تفاعلية كاملة مع تشغيل المقاطع السمعية وحذف الأخطاء وكتابة الفراغات تلقائياً.
-              </p>
-            </div>
-            <a
-              href="https://ieltsonlinetests.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 bg-slate-55 dark:bg-slate-850 hover:bg-purple-600 hover:text-white dark:text-slate-200 text-slate-700 font-bold text-[10.5px] py-1.5 rounded-xl flex items-center justify-center gap-1 transition-all"
-            >
-              <span>فتح المنصة للتدرب</span>
-              <ExternalLink className="h-3.5 w-3.5" />
-            </a>
-          </div>
 
+              {/* Action Button: Open Link & play */}
+              <a
+                href={podcast.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 bg-orange-500 hover:bg-orange-600 text-white font-bold text-[10.5px] py-2 px-4 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 cursor-pointer shadow-xs hover:shadow"
+              >
+                <Play className="h-3 w-3 fill-current" />
+                <span>شغل البودكاست وابدأ السماع</span>
+              </a>
+            </div>
+          ))}
+
+          {filteredPodcasts.length === 0 && (
+            <div className="col-span-full text-center py-8 text-slate-400 dark:text-slate-600">
+              لا توجد قنوات بودكاست تطابق هذا البحث.
+            </div>
+          )}
         </div>
       </div>
 
     </div>
   );
 }
+
+const LISTENING_PODCASTS = [
+  { name: "Luke’s English Podcast", url: "https://teacherluke.co.uk", desc: "بودكاست بريطاني فائز بجوائز يقدم لغة حقيقية، غني بالنكت والقصص المشوقة والتعليم الفعال.", host: "Luke Thompson" },
+  { name: "All Ears English", url: "https://www.allearsenglish.com", desc: "تركز المنصة على الاتصال لا الكمال 'Connection NOT Perfection' بلهجة أمريكية حيوية مذهلة.", host: "Lindsay & Michelle" },
+  { name: "BBC 6 Minute English", url: "https://www.bbc.co.uk/learningenglish/english/features/6-minute-english", desc: "بودكاست بي بي سي الأيقوني لمناقشة مواضيع شيقة وبناء مفردات في 6 دقائق فقط.", host: "BBC Learning" },
+  { name: "High Level Listening Advanced English Podcast", url: "https://www.highlevellistening.com", desc: "منصة ممتازة مصممة خصيصاً للمتعلمين المتقدمين وطلاب اختبار الآيلتس والمحترفين لضبط السمع.", host: "Mark & Kat" },
+  { name: "RealLife English", url: "https://reallifeglobal.com", desc: "ترشدك المنصة ومستودعاتها الصوتية لفهم المتحدثين الأصليين وبناء الثقة بالنفس واللغة اليومية طبيعياً.", host: "RealLife Team" },
+  { name: "Stuff You Should Know", url: "https://www.iheart.com/podcast/stuff-you-should-know-20922291/", desc: "بودكاست عالمي مدهش يشرح طريقة عمل الأشياء حول العالم بمفردات رفيعة غنية تناسب مستوى الأكاديمي.", host: "Josh & Chuck" },
+  { name: "Culips ESL Podcast", url: "https://esl.culips.com", desc: "حوارات يومية سريعة وبطيئة مخصصة لشرح الكنايات والتعبيرات الاصطلاحية الشائعة للمتحدثين بطلاقة.", host: "Andrew & Friends" },
+  { name: "The English We Speak (BBC)", url: "https://www.bbc.co.uk/learningenglish/english/features/the-english-we-speak", desc: "شروحات بي بي سي دقيقة وذكية للغاية لأحدث المصطلحات والاصطلاحات الإنجليزية المستعملة بالشارع.", host: "BBC Learning" },
+  { name: "English Class 101", url: "https://www.englishclass101.com", desc: "بوابة صوتية ضخمة تغطي كافة المستويات مع أدوات تفاعلية وأوراق عمل لفهم سريع عميق.", host: "Innovative Language" },
+  { name: "Speak English with Tiffani", url: "https://speakenglishwithtiffani.com", desc: "قناة وبودكاست تعليمي يمنحك أساليب واستراتيجيات عملية للتحدث كمتحدث أصلي بنطق صحيح وسلس.", host: "Teacher Tiffani" }
+];
