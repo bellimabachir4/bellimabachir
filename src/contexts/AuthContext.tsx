@@ -5,6 +5,8 @@ import {
   signOut, 
   signInWithPopup, 
   GoogleAuthProvider,
+  FacebookAuthProvider,
+  OAuthProvider,
   User as FirebaseUser,
   sendPasswordResetEmail,
   sendEmailVerification
@@ -27,7 +29,7 @@ import { auth, db, isFirebaseAvailable } from "../lib/firebase";
 export const translateFirebaseError = (error: any): string => {
   const code = error?.code || error?.message || "";
   if (code.includes("auth/operation-not-allowed")) {
-    return "⚠️ طريقة تسجيل الدخول بالبريد الإلكتروني وكلمة المرور غير مفعّلة في لوحة تحكم Firebase Console. الرجاء الانتقال لقسم Authentication وتفعيلها (Email/Password).";
+    return "⚠️ طريقة تسجيل الدخول هذه غير مفعّلة حالياً في لوحة تحكّم Firebase Console. الرجاء الذهاب إلى Authentication وتفعيل مزودي الخدمة (Email/Password, Facebook Login, Apple Sign In) لحل المشكلة.";
   }
   if (code.includes("auth/email-already-in-use")) {
     return "❌ البريد الإلكتروني مستخدم بالفعل مسبقاً من قِبل طالب آخر.";
@@ -92,6 +94,8 @@ interface AuthContextType {
   login: (email: string, password: string, rememberMe?: boolean) => Promise<void>;
   register: (fullName: string, email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
+  loginWithFacebook: () => Promise<void>;
+  loginWithApple: () => Promise<void>;
   loginAsGuest: () => Promise<void>;
   logout: () => Promise<void>;
   updateUserStats: (fields: Partial<IELTSUser>) => Promise<void>;
@@ -397,8 +401,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 3. Google Login
   const loginWithGoogle = async () => {
     if (isFirebase && auth) {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+      } catch (err: any) {
+        throw new Error(translateFirebaseError(err));
+      }
     } else {
       // Mock Google Login
       const uid = "Google_" + Math.random().toString(36).substr(2, 9);
@@ -410,6 +418,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lastActiveDate: new Date().toISOString().split("T")[0],
         weeklyGoalHours: 6,
         vocabularyScore: 240,
+        avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${uid}`
+      };
+      localStorage.setItem("ielts_current_user", JSON.stringify(profile));
+      setUser(profile);
+      loadMockData(profile.uid);
+    }
+  };
+
+  // 3b. Facebook Login
+  const loginWithFacebook = async () => {
+    if (isFirebase && auth) {
+      try {
+        const provider = new FacebookAuthProvider();
+        await signInWithPopup(auth, provider);
+      } catch (err: any) {
+        throw new Error(translateFirebaseError(err));
+      }
+    } else {
+      // Mock Facebook Login
+      const uid = "Facebook_" + Math.random().toString(36).substr(2, 9);
+      const profile: IELTSUser = {
+        uid,
+        fullName: "خليل السعيدي (فيسبوك)",
+        email: "khaleel.facebook@gmail.com",
+        streak: 3,
+        lastActiveDate: new Date().toISOString().split("T")[0],
+        weeklyGoalHours: 4,
+        vocabularyScore: 90,
+        avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${uid}`
+      };
+      localStorage.setItem("ielts_current_user", JSON.stringify(profile));
+      setUser(profile);
+      loadMockData(profile.uid);
+    }
+  };
+
+  // 3c. Apple 로그인 (Sign In with Apple)
+  const loginWithApple = async () => {
+    if (isFirebase && auth) {
+      try {
+        // OAuthProvider requires service name "apple.com"
+        const provider = new OAuthProvider("apple.com");
+        await signInWithPopup(auth, provider);
+      } catch (err: any) {
+        throw new Error(translateFirebaseError(err));
+      }
+    } else {
+      // Mock Apple Login
+      const uid = "Apple_" + Math.random().toString(36).substr(2, 9);
+      const profile: IELTSUser = {
+        uid,
+        fullName: "سارة الأحمد (آبل)",
+        email: "sara.apple@icloud.com",
+        streak: 7,
+        lastActiveDate: new Date().toISOString().split("T")[0],
+        weeklyGoalHours: 8,
+        vocabularyScore: 310,
         avatarUrl: `https://api.dicebear.com/7.x/adventurer/svg?seed=${uid}`
       };
       localStorage.setItem("ielts_current_user", JSON.stringify(profile));
@@ -599,6 +664,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         register,
         loginWithGoogle,
+        loginWithFacebook,
+        loginWithApple,
         loginAsGuest,
         logout,
         updateUserStats,
